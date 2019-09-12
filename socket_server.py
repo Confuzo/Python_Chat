@@ -46,7 +46,6 @@ class Server:
 
     def __broadcast(self, message: bytes, connection: socket.socket):
         for client in self.__clients:
-            client: socket.socket
             if client != connection:
                 try:
                     client.send(message)

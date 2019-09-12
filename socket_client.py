@@ -7,7 +7,7 @@ from rc4 import RC4
 
 class Client:
     __port = 5354
-    __key: str
+    __key = str()
 
     def __init__(self):
         self.__tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -27,17 +27,16 @@ class Client:
 
             for socks in read_sockets:
                 if socks == self.__tcp:
-                    socks: socket.socket
-                    message: str = socks.recv(2048).decode()
+                    message= socks.recv(2048).decode()
                     decrypted_message = self.__verify_encryption(message[19:])
                     print(message[:19] + decrypted_message)
                 else:
-                    message: str = sys.stdin.readline()
+                    message= sys.stdin.readline()
                     if message[:5] == "/exit":
                         exit(1)
 
                     if self.__encryption:
-                        encrypted_message: str = self.__encryption(message, True)
+                        encrypted_message = self.__encryption(message, True)
                         self.__start_encryption(message)
                         self.__tcp.send(bytes(encrypted_message.encode()))
                     else:
@@ -63,7 +62,7 @@ class Client:
     def __execute_s_des(self, bin_message, execute: SimpleDes.encrypt) -> list:
         s_des_message = list()
         for byte in bin_message:
-            byte: str
+           
             s_des_message.append(execute(byte.zfill(8), self.__key))
 
         return s_des_message
