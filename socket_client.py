@@ -34,9 +34,7 @@ class Client:
                 else:
                     message: str = sys.stdin.readline()
                     if message[:5] == "/exit":
-                        print("saindo do chat...")
-                        self.__tcp.close()
-                        exit(0)
+                        exit(1)
 
                     if self.__encryption:
                         encrypted_message: str = self.__encryption(message, True)
@@ -119,15 +117,22 @@ class Client:
 
         return message
 
+    def __del__(self):
+        print("saindo do chat...")
+        self.__tcp.close()
+
 
 def start_client():
-    client = Client()
-
     if len(sys.argv) != 2:
         print("digite o ip do server que deseja conectar e nada mais !!")
         exit(1)
 
-    client.connect(sys.argv[1])
+    client = Client()
+
+    try:
+        client.connect(sys.argv[1])
+    except KeyboardInterrupt:
+        exit(2)
 
 
 if __name__ == '__main__':

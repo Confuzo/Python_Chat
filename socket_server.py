@@ -54,6 +54,7 @@ class Server:
                     self.__remove_connection(client)
 
     def run(self):
+
         while True:
             con, client = self.__tcp.accept()
 
@@ -67,10 +68,18 @@ class Server:
             self.__clients.remove(conection)
             conection.close()
 
+    def __del__(self):
+        print("\ndesconectando o server")
+        self.__tcp.close()
+
 
 def start_server():
     server = Server()
-    server.run()
+    print("Precione CTRL + C para sair")
+    try:
+        server.run()
+    except KeyboardInterrupt:
+        exit(1)
 
 
 if __name__ == '__main__':
