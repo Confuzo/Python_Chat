@@ -123,7 +123,11 @@ class Client:
 def start_client():
     client = Client()
 
-    client.connect("127.0.0.1")
+    if len(sys.argv) != 2:
+        print("digite o ip do server que deseja conectar e nada mais !!")
+        exit(1)
+
+    client.connect(sys.argv[1])
 
 
 if __name__ == '__main__':
