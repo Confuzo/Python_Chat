@@ -61,5 +61,5 @@ def test_rc4():
     
 
 
-if __name__ == '__main__':
-    test_rc4()
+'''if __name__ == '__main__':
+    test_rc4()'''

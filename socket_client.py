@@ -9,11 +9,15 @@ class Client:
     __port = 5354
     __key = str()
 
-    def __init__(self):
+    def __init__(self, args):
         self.__tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.__s_des = SimpleDes()
-        self.__rc4 = RC4()
-        self.__encryption = None
+        if(args[1] == "sdes" or args[1] == "rc4"):
+            if(args[1] == "sdes"):
+                self.__encryption = SimpleDes()
+            else:
+                self.__encryption = RC4()
+        else:
+            self.__encryption = None
 
     def connect(self, host: str):
         dest = (host, self.__port)
@@ -28,11 +32,26 @@ class Client:
             for socks in read_sockets:
                 if socks == self.__tcp:
                     message= socks.recv(2048).decode()
-                    decrypted_message = self.__verify_encryption(message[19:])
-                    print(message[:19] + decrypted_message)
+                    if(self.__encryption is None):
+                        print(message)
+                    else:
+                        #print(message)
+                        print(self.decrypt(message))
+                    '''decrypted_message = self.__verify_encryption(message[19:])
+                    print(message[:19] + decrypted_message)'''
                 else:
                     message= sys.stdin.readline()
-                    if message[:5] == "/exit":
+                    if(self.__encryption is None):
+                        self.__tcp.send(bytes(message.encode()))
+                        sys.stdout.write("<You> {}".format(message))
+                        sys.stdout.flush()
+                    else:
+                        copy = message
+                        m = self.encrypt(message)
+                        self.__tcp.send(bytes(m.encode()))
+                        sys.stdout.write("<You> {}".format(copy))
+                        sys.stdout.flush()
+                    '''if message[:5] == "/exit":
                         exit(1)
 
                     if self.__encryption:
@@ -41,12 +60,10 @@ class Client:
                         self.__tcp.send(bytes(encrypted_message.encode()))
                     else:
                         self.__start_encryption(message)
-                        self.__tcp.send(bytes(message.encode()))
+                        self.__tcp.send(bytes(message.encode()))'''
 
-                    sys.stdout.write("<You> {}".format(message))
-                    sys.stdout.flush()
 
-    def __use_s_des(self, message: str, encrypt: bool):
+    '''def __use_s_des(self, message: str, encrypt: bool):
 
         if encrypt:
             execute = self.__s_des.encrypt
@@ -71,16 +88,31 @@ class Client:
     def __binary_list_to_ascii(text: list) -> str:
         return "".join([chr(int(i, 2)) for i in text])
 
-    def __verify_encryption(self, message: str):
-        if self.__encryption is None:
-
-            return self.__verify_start_encryption(message)
+    '''
+    def decrypt(self, message: str):
+        if(sys.argv[1] == "sdes"):
+            message_de = ""
+            for m in message:
+                m = bin(ord(m))
+                m = m[2:].zfill(8)
+                d = self.__encryption.decrypt(m, sys.argv[2])
+                message_de += chr(int(d,2))
+            return message_de
         else:
-            decrypt_message = self.__encryption(message, False)
+            return self.__encryption.execute(message, sys.argv[2])
 
-            return self.__verify_start_encryption(decrypt_message)
-
-    def __use_rc4(self, message: str, encrypt: bool):
+    def encrypt(self, message: str):
+        if(sys.argv[1] == "sdes"):
+            message_en = ""
+            for m in message:
+                m =  bin(ord(m))
+                m = m[2:].zfill(8)
+                d = self.__encryption.encrypt(m, sys.argv[2])
+                message_en += chr(int(d,2))
+            return message_en
+        else:
+            return self.__encryption.execute(message, sys.argv[2])
+    '''def __use_rc4(self, message: str, encrypt: bool):
         return self.__rc4.execute(message, self.__key)
 
     def __start_encryption(self, message: str) -> bool:
@@ -114,7 +146,7 @@ class Client:
         if self.__start_encryption(message):
             return self.__check_type_encryption(message)
 
-        return message
+        return message'''
 
     def __del__(self):
         print("saindo do chat...")
@@ -122,14 +154,14 @@ class Client:
 
 
 def start_client():
-    if len(sys.argv) != 2:
-        print("digite o ip do server que deseja conectar e nada mais !!")
+    if len(sys.argv) < 2:
+        print("O padrão deve ser script, encription, key (Apenas para as criptografias rc4 e s-des)")
         exit(1)
 
-    client = Client()
+    client = Client(sys.argv)
 
     try:
-        client.connect(sys.argv[1])
+        client.connect("")
     except KeyboardInterrupt:
         exit(2)
 

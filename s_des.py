@@ -154,5 +154,5 @@ def tests():
         print("decrypt fail", text)
 
 
-if __name__ == '__main__':
-    tests()
+'''if __name__ == '__main__':
+    tests()'''
