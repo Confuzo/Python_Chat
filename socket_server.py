@@ -16,17 +16,19 @@ class Server:
 
     def __chat_room(self, connection: socket.socket, addr: tuple):
 
-        '''connection.send(bytes("Bem vindo !!\n".encode()))
-        connection.send(bytes("comandos /des /rc4 /exit\n".encode()))
-        connection.send(bytes("/exit para sair do chat\n".encode()))
-        connection.send(bytes("/des para iniciar o simple des\n".encode()))
-        connection.send(bytes("/rc4 para iniciar o rc4 \n".encode()))
-        connection.send(bytes("exemplo: /des a\n".encode()))
-        connection.send(bytes("exemplo: /rc4 segredo\n".encode()))
-        connection.send(bytes("observe que o segundo parametro: a e segredo\n".encode()))
-        connection.send(bytes("represeta a chave, no caso do Simple DES\n".encode()))
-        connection.send(bytes("a chave só pode ter 1 caracter \n".encode()))
-        connection.send(bytes("o RC4 pode ter até 256 caracters \n".encode()))'''
+        welcome_msg = "\x02Bem vindo !!\n" \
+                      "comandos /des /rc4 /exit\n" \
+                      "\exit para sair do chat\n" \
+                      "digite: \crypt sdes para iniciar o simple des\n" \
+                      "digite: \crypt rc4 para iniciar o rc4 \n" \
+                      "exemplo: \crypt sdes \"1010101010\"\n" \
+                      "exemplo: \crypt rc4 \"segredo\"\n" \
+                      "observe que o segundo parametro: 1010101010 e segredo\n" \
+                      "represeta a chave, no caso do Simple DES\n" \
+                      "a chave só pode ter 10 bytes\n" \
+                      "o RC4 pode ter até 256 caracters \n"
+
+        connection.send(bytes(welcome_msg.encode()))
 
         while True:
 
@@ -35,10 +37,9 @@ class Server:
             if not msg:
                 break
 
-            '''msg_to_seed = "<{}, {}> {}".format(addr[0], addr[1], msg.decode()).encode()
+            msg_to_seed = "<{}, {}> \x02{}".format(addr[0], addr[1], msg.decode()).encode()
 
-            self.__broadcast(msg_to_seed, connection)'''
-            self.__broadcast((msg.decode()).encode(), connection)
+            self.__broadcast(msg_to_seed, connection)
 
             print(addr, msg.decode())
 
@@ -47,6 +48,7 @@ class Server:
 
     def __broadcast(self, message: bytes, connection: socket.socket):
         for client in self.__clients:
+            client: socket.socket
             if client != connection:
                 try:
                     client.send(message)

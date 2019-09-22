@@ -36,13 +36,13 @@ class Client:
                         kp = controls[1]
                         self.__key = self.__diffie_hellman.calculate_sessionkey(int(kp))
                         print("Chave de diffie hellman trocadas!")
-                        self.__key = bin(self.__key)[2:].zfill(10)[-10:]
+                        #self.__key = bin(self.__key)[2:].zfill(10)[-10:]
                     elif controls[0] == "\dh_begin":
                         kp = controls[1]
                         y = self.__diffie_hellman.calculate_pubkey()
                         self.__key = self.__diffie_hellman.calculate_sessionkey(int(kp))
                         print("Chave de diffie hellman trocadas!")
-                        self.__key = bin(self.__key)[2:].zfill(10)[-10:]
+                        #self.__key = bin(self.__key)[2:].zfill(10)[-10:]
                         msg = "\dh_end " + str(y)
                         self.__tcp.send(bytes(msg.encode()))
                     else: 
@@ -111,6 +111,7 @@ class Client:
             type_encryption = commands[1]
             if type_encryption == "sdes":
                 self.__encryption = self.__use_s_des
+                self.__key = bin(self.__key)[2:].zfill(10)[-10:]
                 return True
                 '''if self.__have_quotes(commands[2]):
                     key = commands[2][1:-1]
@@ -124,6 +125,7 @@ class Client:
 
             elif type_encryption == "rc4":
                 self.__encryption = self.__use_rc4
+                self.__key = str(self.__key)
                 '''if self.__have_quotes(commands[2]):
                     self.__encryption = self.__use_rc4
                     #self.__key = commands[2][1:-1]
