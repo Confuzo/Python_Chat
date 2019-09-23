@@ -21,12 +21,8 @@ class Server:
                       "\exit para sair do chat\n" \
                       "digite: \crypt sdes para iniciar o simple des\n" \
                       "digite: \crypt rc4 para iniciar o rc4 \n" \
-                      "exemplo: \crypt sdes \"1010101010\"\n" \
-                      "exemplo: \crypt rc4 \"segredo\"\n" \
-                      "observe que o segundo parametro: 1010101010 e segredo\n" \
-                      "represeta a chave, no caso do Simple DES\n" \
-                      "a chave só pode ter 10 bytes\n" \
-                      "o RC4 pode ter até 256 caracters \n"
+                      "digite: \dh_begin  para trocar as chaves (Diffie-Hellman)\n"
+        
 
         connection.send(bytes(welcome_msg.encode()))
 
