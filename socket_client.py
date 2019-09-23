@@ -111,7 +111,8 @@ class Client:
             type_encryption = commands[1]
             if type_encryption == "sdes":
                 self.__encryption = self.__use_s_des
-                self.__key = bin(self.__key)[2:].zfill(10)[-10:]
+                self.__key = bin(int(self.__key))[2:].zfill(10)[-10:]
+                #self.__key = bin(self.__key)[2:].zfill(10)[-10:]
                 return True
                 '''if self.__have_quotes(commands[2]):
                     key = commands[2][1:-1]
